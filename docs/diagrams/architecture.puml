@@ -1,0 +1,28 @@
+@startuml
+title React + TypeScript Frontend with ActiveMQ Architecture
+
+node "ActiveMQ Broker\n(STOMP over WebSocket)" as broker {
+}
+
+node "Shared Frontend\nReact + TypeScript PWA\n(Runs in browser on Pi,\ndesktop, or mobile)" as frontend {
+}
+
+node "Optional Native Wrappers\n(Capacitor / React Native)" as wrappers {
+}
+
+node "Raspberry Pi\nBrowser" as pi_browser {
+}
+
+node "Mobile iOS\nApp" as ios_app {
+}
+
+broker --> frontend : WebSocket Connection
+
+frontend --> wrappers : Optional Wrapping
+
+wrappers --> pi_browser : Runs as PWA
+wrappers --> ios_app : Runs as Native App
+
+frontend --> pi_browser : Runs as PWA in Browser
+
+@enduml
