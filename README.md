@@ -1,7 +1,7 @@
 # PiTrac Client
 - [Summary](#summary)
     - [Architecture](#architecture)
-- [Requirements](#requirements)
+- [PreRequisites & Library Versions ](#prerequisites--library-versions)
 
 ## Summary 
 
