@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { Client, IMessage } from '@stomp/stompjs';
 
 const ACTIVE_MQ_WS_URL = 'ws://localhost:61614/ws'; // Change to your ActiveMQ WebSocket URL
-const TOPIC_NAME = '/topic/golfsim';                 // Change to your topic
+const TOPIC_NAME = '/topic/Golf.Sim';                 // Change to your topic
 
 const ActiveMQMessaging: React.FC = () => {
   const [connected, setConnected] = useState(false);
