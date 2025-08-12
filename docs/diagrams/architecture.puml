@@ -21,7 +21,7 @@ broker --> frontend : WebSocket Connection
 frontend --> wrappers : Optional Wrapping
 
 wrappers --> pi_browser : Runs as PWA
-wrappers --> ios_app : Runs as Native App
+wrappers --> ios_app : Runs as Native App (future add)
 
 frontend --> pi_browser : Runs as PWA in Browser
 
