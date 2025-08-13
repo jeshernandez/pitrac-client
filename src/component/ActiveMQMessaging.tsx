@@ -61,13 +61,13 @@ const ActiveMQMessaging: React.FC = () => {
   }
 
   return (
-    <div style={{ padding: 20, fontFamily: 'Arial, sans-serif' }}>
+<div style={{ maxWidth: '100%', overflowX: 'auto', whiteSpace: 'nowrap' }}>
 <h2>
   ActiveMQ Messages {connected ? '(Connected' : '(Disconnected)'}
   {connected && brokerInfo.version && brokerInfo.sessionId && (
-    <>
-      : Version {sanitize(brokerInfo.version)}, Session ID {sanitize(brokerInfo.sessionId)}
-    </>
+      <>
+        : Version {sanitize(brokerInfo.version)}, Session ID {sanitize(brokerInfo.sessionId)})
+      </>
   )}
 </h2>
       <p>Status: {connected ? 'Connected' : 'Disconnected'}</p>
