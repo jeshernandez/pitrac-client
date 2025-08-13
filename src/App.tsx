@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { Client, IMessage } from '@stomp/stompjs';
 
 const ACTIVE_MQ_WS_URL = 'ws://localhost:61614/ws'; // Update with your ActiveMQ WebSocket URL
-const TOPIC_NAME = '/topic/golfsim';                 // Your topic
+const TOPIC_NAME = 'Golf.Sim';                 // Your topic
 
 function App() {
   const [connected, setConnected] = useState(false);
