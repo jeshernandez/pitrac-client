@@ -36,16 +36,17 @@ const ActiveMQMessaging: React.FC = () => {
       }
       try {
         const bytes = base64ToUint8Array(message.body);
-        const unpacked = unpackMessagePackData(bytes);
+        const unpacked = tryUnpackWithSlices(bytes, unpackMessagePackData);
 
         if (unpacked) {
-          console.log('Unpacked message:', unpacked);
+        console.log('Unpacked message:', unpacked);
+        setMessages(prev => [...prev, JSON.stringify(unpacked)]);
 
           // Convert unpacked object to a pretty JSON string (or customize display)
-          const displayString = JSON.stringify(unpacked, null, 2);
+         // const displayString = JSON.stringify(unpacked, null, 2);
 
           // Append new message to the messages state array
-          setMessages((prevMessages) => [...prevMessages, displayString]);
+          //setMessages((prevMessages) => [...prevMessages, displayString]);
         }
       } catch (e) {
         console.error('Error unpacking message:', e);
@@ -124,5 +125,31 @@ function base64ToUint8Array(base64: string): Uint8Array {
     return encoder.encode(base64);
   }
 }
+
+// Helper function to safely unpack with retries by slicing buffer
+function tryUnpackWithSlices(
+  bytes: Uint8Array,
+  unpackFunc: (data: Uint8Array) => any
+): any | null {
+  try {
+    return unpackFunc(bytes);
+  } catch (e) {
+    console.warn('Full buffer unpack failed:', e);
+
+    // Try skipping first byte
+    try {
+      return unpackFunc(bytes.slice(1));
+    } catch {
+      // Try skipping last byte
+      try {
+        return unpackFunc(bytes.slice(0, bytes.length - 1));
+      } catch (e2) {
+        console.error('Unpack failed on sliced buffers too:', e2);
+        return null;
+      }
+    }
+  }
+}
+
 
 export default ActiveMQMessaging;
