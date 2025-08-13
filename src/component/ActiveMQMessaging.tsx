@@ -24,7 +24,7 @@ const ActiveMQMessaging: React.FC = () => {
       if (frame.headers['server']) {
         setBrokerInfo((prev) => ({ ...prev, version: frame.headers['server'] }));
       }
-      client.subscribe(TOPIC_NAME, (message: IMessage) => {
+      function handleMessage(message: IMessage) {
         console.log('Received message:', message.headers, message.body);
         // Capture version & sessionId from first message if available
         if (!brokerInfo.version && message.headers['version']) {
@@ -33,8 +33,16 @@ const ActiveMQMessaging: React.FC = () => {
         if (!brokerInfo.sessionId && message.headers['session']) {
           setBrokerInfo((prev) => ({ ...prev, sessionId: message.headers['session'] }));
         }
-        setMessages((prev) => [...prev, message.body]);
-      });
+        // Parse message body as JSON and store stringified version
+        try {
+          const parsed = JSON.parse(message.body);
+          setMessages((prev) => [JSON.stringify(parsed, null, 2), ...prev]);
+        } catch (e) {
+          setMessages((prev) => [message.body, ...prev]);
+        }
+      }
+
+      client.subscribe(TOPIC_NAME, handleMessage);
     };
 
     client.onDisconnect = () => {
