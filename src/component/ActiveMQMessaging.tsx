@@ -20,6 +20,7 @@ const ActiveMQMessaging: React.FC = () => {
       setConnected(true);
       client.subscribe(TOPIC_NAME, (message: IMessage) => {
         setMessages((prev) => [...prev, message.body]);
+        console.log('Received message:', message.headers, message.body);
       });
     };
 
