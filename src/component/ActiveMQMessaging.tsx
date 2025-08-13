@@ -110,13 +110,19 @@ const ActiveMQMessaging: React.FC = () => {
 };
 
 function base64ToUint8Array(base64: string): Uint8Array {
-  const binaryString = window.atob(base64);
-  const len = binaryString.length;
-  const bytes = new Uint8Array(len);
-  for (let i = 0; i < len; i++) {
-    bytes[i] = binaryString.charCodeAt(i);
+  try {
+    const binaryString = window.atob(base64);
+    const len = binaryString.length;
+    const bytes = new Uint8Array(len);
+    for (let i = 0; i < len; i++) {
+      bytes[i] = binaryString.charCodeAt(i);
+    }
+    return bytes;
+  } catch {
+    // If not valid base64, treat as plain text UTF-8 bytes
+    const encoder = new TextEncoder();
+    return encoder.encode(base64);
   }
-  return bytes;
 }
 
 export default ActiveMQMessaging;
