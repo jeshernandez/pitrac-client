@@ -56,16 +56,20 @@ const ActiveMQMessaging: React.FC = () => {
     };
   }, [brokerInfo.version, brokerInfo.sessionId]);
 
+  function sanitize(version: string) {
+    throw new Error('Function not implemented.');
+  }
+
   return (
     <div style={{ padding: 20, fontFamily: 'Arial, sans-serif' }}>
-      <h2>
-        ActiveMQ Messages {connected ? '(Connected' : '(Disconnected'}
-        {connected && brokerInfo.version && brokerInfo.sessionId
-          ? `: Version ${brokerInfo.version}, Session ID ${brokerInfo.sessionId})`
-          : connected
-          ? ')'
-          : ''}
-      </h2>
+<h2>
+  ActiveMQ Messages {connected ? '(Connected' : '(Disconnected)'}
+  {connected && brokerInfo.version && brokerInfo.sessionId && (
+    <>
+      : Version {sanitize(brokerInfo.version)}, Session ID {sanitize(brokerInfo.sessionId)}
+    </>
+  )}
+</h2>
       <p>Status: {connected ? 'Connected' : 'Disconnected'}</p>
       <div
         style={{
