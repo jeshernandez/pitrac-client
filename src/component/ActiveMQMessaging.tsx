@@ -25,28 +25,32 @@ const ActiveMQMessaging: React.FC = () => {
       if (frame.headers['server']) {
         setBrokerInfo((prev) => ({ ...prev, version: frame.headers['server'] }));
       }
-      function handleMessage(message: IMessage) {
-        console.log('Received message:', message.headers, message.body);
-        // Capture version & sessionId from first message if available
-        if (!brokerInfo.version && message.headers['version']) {
-          setBrokerInfo((prev) => ({ ...prev, version: message.headers['version'] }));
-        }
-        if (!brokerInfo.sessionId && message.headers['session']) {
-          setBrokerInfo((prev) => ({ ...prev, sessionId: message.headers['session'] }));
-        }
-try {
-    // If msg.body is base64 encoded binary
-    const bytes = base64ToUint8Array(message.body);
-    const unpacked = unpackMessagePackData(bytes);
-
-    if (unpacked) {
-      console.log('Unpacked message:', unpacked);
-      // Save to state or update UI here
-    }
-  } catch (e) {
-    console.error('Error unpacking message:', e);
-  }
+    function handleMessage(message: IMessage) {
+      console.log('Received message:', message.headers, message.body);
+      // Capture version & sessionId from first message if available
+      if (!brokerInfo.version && message.headers['version']) {
+        setBrokerInfo((prev) => ({ ...prev, version: message.headers['version'] }));
       }
+      if (!brokerInfo.sessionId && message.headers['session']) {
+        setBrokerInfo((prev) => ({ ...prev, sessionId: message.headers['session'] }));
+      }
+      try {
+        const bytes = base64ToUint8Array(message.body);
+        const unpacked = unpackMessagePackData(bytes);
+
+        if (unpacked) {
+          console.log('Unpacked message:', unpacked);
+
+          // Convert unpacked object to a pretty JSON string (or customize display)
+          const displayString = JSON.stringify(unpacked, null, 2);
+
+          // Append new message to the messages state array
+          setMessages((prevMessages) => [...prevMessages, displayString]);
+        }
+      } catch (e) {
+        console.error('Error unpacking message:', e);
+      }
+    }
 
       client.subscribe(TOPIC_NAME, handleMessage);
     };
