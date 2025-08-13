@@ -1,6 +1,7 @@
 // src/ActiveMQMessaging.tsx
 import React, { useEffect, useState } from 'react';
 import { Client, IMessage } from '@stomp/stompjs';
+import { unpackMessagePackData } from './unpackMessagePackData';
 
 const ACTIVE_MQ_WS_URL = 'ws://localhost:61614/ws'; // Change to your ActiveMQ WebSocket URL
 const TOPIC_NAME = '/topic/Golf.Sim'; // Updated to STOMP topic format
@@ -33,13 +34,18 @@ const ActiveMQMessaging: React.FC = () => {
         if (!brokerInfo.sessionId && message.headers['session']) {
           setBrokerInfo((prev) => ({ ...prev, sessionId: message.headers['session'] }));
         }
-        // Parse message body as JSON and store stringified version
-        try {
-          const parsed = JSON.parse(message.body);
-          setMessages((prev) => [JSON.stringify(parsed, null, 2), ...prev]);
-        } catch (e) {
-          setMessages((prev) => [message.body, ...prev]);
-        }
+try {
+    // If msg.body is base64 encoded binary
+    const bytes = base64ToUint8Array(message.body);
+    const unpacked = unpackMessagePackData(bytes);
+
+    if (unpacked) {
+      console.log('Unpacked message:', unpacked);
+      // Save to state or update UI here
+    }
+  } catch (e) {
+    console.error('Error unpacking message:', e);
+  }
       }
 
       client.subscribe(TOPIC_NAME, handleMessage);
@@ -66,7 +72,7 @@ const ActiveMQMessaging: React.FC = () => {
   ActiveMQ Messages {connected ? '(Connected' : '(Disconnected)'}
   {connected && brokerInfo.version && brokerInfo.sessionId && (
       <>
-        : Version {sanitize(brokerInfo.version)}, Session ID {sanitize(brokerInfo.sessionId)})
+        : Version {sanitize(brokerInfo.version)}, Session ID {sanitize(brokerInfo.sessionId)}
       </>
   )}
 </h2>
@@ -98,5 +104,15 @@ const ActiveMQMessaging: React.FC = () => {
     </div>
   );
 };
+
+function base64ToUint8Array(base64: string): Uint8Array {
+  const binaryString = window.atob(base64);
+  const len = binaryString.length;
+  const bytes = new Uint8Array(len);
+  for (let i = 0; i < len; i++) {
+    bytes[i] = binaryString.charCodeAt(i);
+  }
+  return bytes;
+}
 
 export default ActiveMQMessaging;
